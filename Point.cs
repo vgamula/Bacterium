@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+//using Bitmap = System.Drawing.Bitmap;
 
 namespace Bacterium
 {
@@ -38,9 +40,9 @@ namespace Bacterium
             set { _cell = value; }
         }
 
-        public Point(Cell c, int Side, int I, int J)
+        public Point(Cell C, int Side, int I, int J)
         {
-            if (_cell.enabled) return;
+            if (!C.enabled) return;
             _image = new Image();
             _x = _cell.x;
             _y = _cell.y;
@@ -48,7 +50,15 @@ namespace Bacterium
             _j = J;
             Canvas.SetLeft(_image, _x);
             Canvas.SetTop(_image, _y);
-            //..
+            _image.Height = HEIGHT;
+            _image.Width = WIDTH;
+            _side = Side;
+            BitmapImage tmp;
+            if (_side == LIGHT)
+                tmp = new BitmapImage(new Uri(""));
+            else
+                tmp = new BitmapImage(new Uri(""));
+            _image.Source = tmp;
         }
     }
 }
