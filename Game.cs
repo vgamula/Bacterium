@@ -9,40 +9,50 @@ namespace Bacterium
 {
     class Game
     {
-        public List<Point> lstl, lstd;
-        public List<Cell> cells;
+        private List<Point> _lightList;
+        private List<Point> _darkList;
+        private List<List<Cell>> _cells;
+        public bool IsLightTurn { get; set; }
 
-        public bool isLocked()
+        public Game()
+        {
+            _lightList = new List<Point>();
+            _darkList = new List<Point>();
+            _cells = new List<List<Cell>>();
+            InitializeCells();
+        }
+
+        public bool IsLocked()
         {
             int i, j;
-            for (int ii = 0; ii < (turnl ? lstl.Count : lstd.Count); i++)
+            for (int ii = 0; ii < (IsLightTurn ? _lightList.Count : _darkList.Count); ii++)
             {
-                i = turnl ? lstl[ii]->i : lstd[ii]->i;
-                j = turnl ? lstl[ii]->j : lstd[ii]->j;
+                i = IsLightTurn ? _lightList[ii].I : _darkList[ii].I;
+                j = IsLightTurn ? _lightList[ii].J : _darkList[ii].J;
                 if (i - 1 >= 0)
                 {
-                    if (cells[i - 1, j].Enabled) return false;
-                    if (j - 1 >= 0) if (cells[i - 1, j - 1].Enabled) return false;
+                    if (_cells[i - 1][j].Enabled) return false;
+                    if (j - 1 >= 0) if (_cells[i - 1][j - 1].Enabled) return false;
                 }
                 if (i - 2 >= 0)
                 {
-                    if (cells[i - 2, j].Enabled) return false;
-                    if (j - 2 >= 0) if (cells[i - 2, j - 2].Enabled) return false;
+                    if (_cells[i - 2][j].Enabled) return false;
+                    if (j - 2 >= 0) if (_cells[i - 2][ j - 2].Enabled) return false;
                 }
-                if (i + 1 < cells.Count)
+                if (i + 1 < _cells.Count)
                 {
-                    if (cells[i + 1, j].Enabled) return false;
-                    if (j + 1 < cells[i + 1].Count) if (cells[i + 1, j + 1].Enabled) return false;
+                    if (_cells[i + 1][j].Enabled) return false;
+                    if (j + 1 < _cells[i + 1].Count) if (_cells[i + 1][j + 1].Enabled) return false;
                 }
-                if (i + 2 < cells.Count)
+                if (i + 2 < _cells.Count)
                 {
-                    if (cells[i + 2, j].Enabled) return false;
-                    if (j + 2 < cells[i + 2].Count) if (cells[i + 2, j + 2].Enabled) return false;
+                    if (_cells[i + 2][j].Enabled) return false;
+                    if (j + 2 < _cells[i + 2].Count) if (_cells[i + 2][j + 2].Enabled) return false;
                 }
-                if (j + 1 < cells[i].Count) if (cells[i, j + 1].Enabled) return false;
-                if (j + 2 < cells[i].Count) if (cells[i, j + 2].Enabled) return false;
-                if (j - 1 >= 0) if (cells[i, j - 1].Enabled) return false;
-                if (j - 2 >= 0) if (cells[i, j - 2].Enabled) return false;
+                if (j + 1 < _cells[i].Count) if (_cells[i][j + 1].Enabled) return false;
+                if (j + 2 < _cells[i].Count) if (_cells[i][j + 2].Enabled) return false;
+                if (j - 1 >= 0) if (_cells[i][j - 1].Enabled) return false;
+                if (j - 2 >= 0) if (_cells[i][j - 2].Enabled) return false;
             }
             return true;
         }
@@ -51,17 +61,17 @@ namespace Bacterium
         {
             FileStream fs = new FileStream("save.bin", FileMode.Create);
             BinaryWriter w = new BinaryWriter(fs);
-            w.Write(turnl);
-            w.Write((Int32)lstl.Count);
-            for (int i = 0; i < lstl.Count; i++)
+            w.Write(IsLightTurn);
+            w.Write((Int32)_lightList.Count);
+            for (int i = 0; i < _lightList.Count; i++)
             {
-                w.Write((Int32)lstl[i].i);
-                w.Write((Int32)lstl[i].j);
+                w.Write((Int32)_lightList[i].I);
+                w.Write((Int32)_lightList[i].J);
             }
-            for (int i = 0; i < lstd.Count; i++)
+            for (int i = 0; i < _darkList.Count; i++)
             {
-                w.Write((Int32)lstd[i].i);
-                w.Write((Int32)lstd[i].j);
+                w.Write((Int32)_darkList[i].I);
+                w.Write((Int32)_darkList[i].J);
             }
             fs.Close();
             MessageBox.Show("Збережено! :)", "Повідомлення");
@@ -73,35 +83,35 @@ namespace Bacterium
             {
                 Controls.Clear();
                 InitializeComponent();
-                lstl.Clear();
-                lstd.Clear();
-                cells.Clear();
+                _lightList.Clear();
+                _darkList.Clear();
+                _cells.Clear();
                 //new method here
                 InitializeCells();
                 FileStream fs = new FileStream("save.bin", FileMode.Open);
                 BinaryReader r = new BinaryReader(fs);
                 int i, j, lcount;
                 Point t;
-                turnl = r.ReadBoolean();
+                IsLightTurn = r.ReadBoolean();
                 lcount = r.ReadInt32();
                 for (int ii = 0; ii < lcount; ii++)
                 {
                     i = r.ReadInt32(); j = r.ReadInt32();
-                    t = new Point(cells[i, j], light, i, j);
-                    Controls.Add(t.get_img());
-                    lstl.Add(t);
+                    t = new Point(_cells[i][j], Point.LIGHT, i, j);
+                    Controls.Add(t.CurrentImage);
+                    _lightList.Add(t);
                 }
                 while (r.BaseStream.Position < r.BaseStream.Length)
                 {
                     i = r.ReadInt32(); j = r.ReadInt32();
-                    t = new Point(cells[i, j], dark, i, j);
-                    Controls.Add(t.get_img());
-                    lstd.Add(t);
+                    t = new Point(_cells[i][j], Point.DARK, i, j);
+                    Controls.Add(t.CurrentImage);
+                    _darkList.Add(t);
                 }
                 fs.Close();
-                label1.Text = Convert.ToString(lstl.Count);
-                label2.Text = Convert.ToString(lstd.Count);
-                if (turnl)
+                label1.Text = Convert.ToString(_lightList.Count);
+                label2.Text = Convert.ToString(_darkList.Count);
+                if (IsLightTurn)
                 {
                     pictureBox3.Visible = true;
                     pictureBox4.Visible = false;
@@ -116,7 +126,7 @@ namespace Bacterium
             catch
             {
                 MessageBox.Show("Немає збережених даних.", "Повідомлення");
-                start_game();
+                Start();
             }
         }
 
@@ -131,147 +141,144 @@ namespace Bacterium
                 clst = new List<Cell>();
                 for (j = 0; j < 9; j++)
                     clst.Add(new Cell(startx + prx * j, starty + pry * j, true));
-                cells.Add(clst);
+                _cells.Add(clst);
             }
             int max = 0;
             for (i = 5; i < 9; i++, max++)
                 for (j = 0; j <= max; j++)
-                    cells[i, j].Enabled = false;
+                    _cells[i][j].Enabled = false;
             max = 5;
             for (i = 0; i < 4; i++, max++)
                 for (j = max; j < 9; j++)
-                    cells[i, j].Enabled = false;
+                    _cells[i][j].Enabled = false;
         }
 
         public void Start()
         {
             Point t;
-            t = new Point(cells[0, 0], light, 0, 0);
-            Controls.Add(t.get_img());
-            lstl.Add(t);
-            t = new Point(cells[4, 8], light, 4, 8);
-            Controls.Add(t.get_img());
-            lstl.Add(t);
-            t = new Point(cells[8, 4], light, 8, 4);
-            Controls.Add(t.get_img());
-            lstl.Add(t);
-            t = new Point(cells[0, 4], dark, 0, 4);
-            Controls.Add(t.get_img());
-            lstd.Add(t);
-            t = new Point(cells[4, 0], dark, 4, 0);
-            Controls.Add(t.get_img());
-            lstd.Add(t);
-            t = new Point(cells[8, 8], dark, 8, 8);
-            Controls.Add(t.get_img());
-            lstd.Add(t);
+            t = new Point(_cells[0][0], Point.LIGHT, 0, 0);
+            Controls.Add(t.CurrentImage);
+            _lightList.Add(t);
+            t = new Point(_cells[4][8], Point.LIGHT, 4, 8);
+            Controls.Add(t.CurrentImage);
+            _lightList.Add(t);
+            t = new Point(_cells[8][4], Point.LIGHT, 8, 4);
+            Controls.Add(t.CurrentImage);
+            _lightList.Add(t);
+            t = new Point(_cells[0][4], Point.DARK, 0, 4);
+            Controls.Add(t.CurrentImage);
+            _darkList.Add(t);
+            t = new Point(_cells[4][0], Point.DARK, 4, 0);
+            Controls.Add(t.CurrentImage);
+            _darkList.Add(t);
+            t = new Point(_cells[8][8], Point.DARK, 8, 8);
+            Controls.Add(t.CurrentImage);
+            _darkList.Add(t);
         }
 
         public int Find(int side, int x, int y)
         {
             int closest = -1;
-            if (side == light)
-            {
-                for (int i = 0; i < lstl.Count; i++)
+            if (side == Point.LIGHT)
+                for (int i = 0; i < _lightList.Count; i++)
                 {
-                    if (x - lstl[i].get_x() >= 0 && x - lstl[i].get_x() <= width &&
-                        y - lstl[i].get_y() >= 0 && y - lstl[i].get_y() <= height)
+                    if (x - _lightList[i].X >= 0 && x - _lightList[i].X <= Point.WIDTH &&
+                        y - _lightList[i].Y >= 0 && y - _lightList[i].Y <= Point.HEIGHT)
                     { closest = i; break; }
                 }
-                return closest;
-            }
-            else if (side == dark)
-            {
-                for (int i = 0; i < lstd.Count; i++)
+            else if (side == Point.DARK)
+                for (int i = 0; i < _darkList.Count; i++)
                 {
-                    if (x - lstd[i].get_x() >= 0 && x - lstd[i].get_x() <= width &&
-                        y - lstd[i].get_y() >= 0 && y - lstd[i].get_y() <= height)
+                    if (x - _darkList[i].X >= 0 && x - _darkList[i].X <= Point.WIDTH &&
+                        y - _darkList[i].Y >= 0 && y - _darkList[i].Y <= Point.HEIGHT)
                     { closest = i; break; }
                 }
-                return closest;
-            }
+            return closest;
         }
 
         public void Clone(Cell c, int side, int i, int j)
         {
             Point t = new Point(c, side, i, j);
-            Controls.Add(t.get_img());
-            if (t.get_side() == light) lstl.Add(t);
-            else lstd.Add(t);
-            turnl = !turnl;
-            if (expansion(t) < 0)
-                MessageBox.Show("Кінець, " + (lstd.Count == 0 ? "сині" : "жовті") + " перемогли!");
+            Controls.Add(t.CurrentImage);
+            if (t.Side == Point.LIGHT) _lightList.Add(t);
+            else _darkList.Add(t);
+            IsLightTurn = !IsLightTurn;
+            if (Expansion(t) < 0)
+                MessageBox.Show("Кінець, " + (_darkList.Count == 0 ? "сині" : "жовті") + " перемогли!");
 
         }
-        public void jump(Point p, Cell c, int i, int j)
+        public void Jump(Point p, Cell c, int i, int j)
         {
-	        p.NewLocation(c.X, c.Y);
-	        p.i=i; p.j=j;
+	        p.SetNewLocation(c.X, c.Y);
+	        p.I = i;
+            p.J = j;
 	        c.Enabled=false;
-	        p.C.enabled=true;
-	        p.C=c; turnl=!turnl;
-	        if (expansion(p)<0)
-		        MessageBox.Show("Кінець, "+(lstd.Count==0?"сині":"жовті")+" перемогли!");
+	        p.CurrentCell.Enabled=true;
+	        p.CurrentCell = c;
+            IsLightTurn = !IsLightTurn;
+	        if (Expansion(p) < 0)
+		        MessageBox.Show("Кінець, "+(_darkList.Count==0?"сині":"жовті")+" перемогли!");
         }
 
         public int ChangeList(Point p, int i)
         {
-            if (p.get_side()==dark)
+            if (p.Side == Point.DARK)
 	        {
-		        p.change(light);
-		        lstl.Add(lstd[i]);
-		        lstd.RemoveAt(i);
+		        p.Side = Point.LIGHT;
+		        _lightList.Add(_darkList[i]);
+		        _darkList.RemoveAt(i);
 	        } else
 	        {
-		        p.change(dark);
-		        lstd.Add(lstl[i]);
-		        lstl.RemoveAt(i);
+		        p.Side = Point.DARK;
+		        _darkList.Add(_lightList[i]);
+		        _lightList.RemoveAt(i);
 	        }
-	        i=i==0?0:(i-1);
-	        if ( lstl.Count==0 || lstd.Count==0 ) return -1;
+	        i = i == 0 ? 0 : (i - 1);
+	        if ( _lightList.Count == 0 || _darkList.Count == 0 ) return -1;
 	        return 0;
         }
 
         public int Expansion(Point p)
         {
-            if (p.get_side() == light)
+            if (p.Side == Point.LIGHT)
             {
-                for (int ii = 0; ii < lstd.Count; ii++)
+                for (int ii = 0; ii < _darkList.Count; ii++)
                 {
-                    if ((lstd[ii].i == p.i - 1 && (lstd[ii].j == p.j || lstd[ii].j == p.j - 1)) ||
-                        (lstd[ii].i == p.i && (lstd[ii].j == p.j - 1 || lstd[ii].j == p.j + 1)) ||
-                        (lstd[ii].i == p.i + 1 && (lstd[ii].j == p.j || lstd[ii].j == p.j + 1)))
-                        if (changelist(lstd[ii], ii) < 0) return -1;
+                    if ((_darkList[ii].I == p.I - 1 && (_darkList[ii].J == p.J || _darkList[ii].J == p.J - 1)) ||
+                        (_darkList[ii].I == p.I && (_darkList[ii].J == p.J - 1 || _darkList[ii].J == p.J + 1)) ||
+                        (_darkList[ii].I == p.I + 1 && (_darkList[ii].J == p.J || _darkList[ii].J == p.J + 1)))
+                        if (ChangeList(_darkList[ii], ii) < 0) return -1;
                 }
             }
             else
-                for (int ii = 0; ii < lstl.Count; ii++)
+                for (int ii = 0; ii < _lightList.Count; ii++)
                 {
-                    if ((lstl[ii].i == p.i - 1 && (lstl[ii].j == p->j || lstl[ii].j == p.j - 1)) ||
-                        (lstl[ii].i == p.i && (lstl[ii].j == p->j - 1 || lstl[ii].j == p.j + 1)) ||
-                        (lstl[ii].i == p.i + 1 && (lstl[ii].j == p->j || lstl[ii].j == p.Sj + 1)))
-                        if (changelist(lstl[ii], ii) < 0) return -1;
+                    if ((_lightList[ii].I == p.I - 1 && (_lightList[ii].J == p.J || _lightList[ii].J == p.J - 1)) ||
+                        (_lightList[ii].I == p.I && (_lightList[ii].J == p.J - 1 || _lightList[ii].J == p.J + 1)) ||
+                        (_lightList[ii].I == p.I + 1 && (_lightList[ii].J == p.J || _lightList[ii].J == p.J + 1)))
+                        if (ChangeList(_lightList[ii], ii) < 0) return -1;
                 }
             return 0;
         }
 
         public bool JumpToCell(int x, int y, Point p)
         {
-            for (int i = 0; i < cells.Count; i++)
+            for (int i = 0; i < _cells.Count; i++)
             {
-                for (int j = 0; j < cells[i].Count; j++)
+                for (int j = 0; j < _cells[i].Count; j++)
                 {
-                    if (x - cells[i,j].X >= 0 && x - cells[i,j].X <= width &&
-                        y - cells[i,j].Y >= 0 && y - cells[i,j].Y <= height)
+                    if (x - _cells[i][j].X >= 0 && x - _cells[i][j].X <= Point.WIDTH &&
+                        y - _cells[i][j].Y >= 0 && y - _cells[i][j].Y <= Point.HEIGHT)
                     {
-                        if (!cells[i,j]->Enabled || (i == p.i && j == p.j)) return false;
-                        if ((i == p.i - 2 && (j == p.j || j == p.j - 2)) ||
-                            (i == p.i && (j == p.j - 2 || j == p.j + 2)) ||
-                            (i == p.i + 2 && (j == p.j || j == p.j + 2)))
-                        { jump(p, cells[i,j], i, j); return true; }
-                        if ((i == p.i - 1 && (j == p.j || j == p.j - 1)) ||
-                            (i == p.i && (j == p.j - 1 || j == p.j + 1)) ||
-                            (i == p.i + 1 && (j == p.j || j == p.j + 1)))
-                            clone(cells[i,j], p.get_side(), i, j);
+                        if (!_cells[i][j].Enabled || (i == p.I && j == p.J)) return false;
+                        if ((i == p.I - 2 && (j == p.J || j == p.J - 2)) ||
+                            (i == p.I && (j == p.J - 2 || j == p.J + 2)) ||
+                            (i == p.I + 2 && (j == p.J || j == p.J + 2)))
+                        { Jump(p, _cells[i][j], i, j); return true; }
+                        if ((i == p.I - 1 && (j == p.J || j == p.J - 1)) ||
+                            (i == p.I && (j == p.J - 1 || j == p.J + 1)) ||
+                            (i == p.I + 1 && (j == p.J || j == p.J + 1)))
+                            Clone(_cells[i][j], p.Side, i, j);
                         return false;
                     }
                 }

@@ -10,13 +10,15 @@ namespace Bacterium
 {
     class Point
     {
-        static const int LIGHT = 1;
-        static const int DARK = 2;
-        static const int WIDTH = 38;
-        static const int HEIGHT = 36;
+        public static readonly int LIGHT = 1;
+        public static readonly int DARK = 2;
+        public static readonly int WIDTH = 38;
+        public static readonly int HEIGHT = 36;
 
         private Image _image;
         private int _side;
+        private int _x;
+        private int _y;
 
         public int I { get; set; }
         public int J { get; set; }
@@ -44,14 +46,22 @@ namespace Bacterium
 
         public int X
         {
-            get;
-            set { Canvas.SetLeft(_image, value); }
+            get { return _x; }
+            set 
+            {
+                _x = value;
+                Canvas.SetLeft(_image, _x);
+            }
         }
 
         public int Y
         {
-            get;
-            set { Canvas.SetTop(_image, value); }
+            get { return _y; }
+            set
+            {
+                _y = value;
+                Canvas.SetTop(_image, _y);
+            }
         }
 
         public Point(Cell cell, int side, int i, int j)
