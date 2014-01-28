@@ -8,16 +8,16 @@ namespace Bacterium
 {
     class Cell
     {
-        public int x { get; set; }
-        public int y { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
 
-        public bool enabled=false;
+        public bool Enabled { get; set; }
 
-        public Cell(int x=0, int y=0, int enabled=false)
+        public Cell(int x = 0, int y = 0, bool enabled = false)
         {
-            this.x = x;
-            this.y = y;
-            this.enabled = enabled;
+            X = x;
+            Y = y;
+            Enabled = enabled;
         }
 
 

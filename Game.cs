@@ -21,28 +21,28 @@ namespace Bacterium
                 j = turnl ? lstl[ii]->j : lstd[ii]->j;
                 if (i - 1 >= 0)
                 {
-                    if (cells[i - 1, j].enabled) return false;
-                    if (j - 1 >= 0) if (cells[i - 1, j - 1].enabled) return false;
+                    if (cells[i - 1, j].Enabled) return false;
+                    if (j - 1 >= 0) if (cells[i - 1, j - 1].Enabled) return false;
                 }
                 if (i - 2 >= 0)
                 {
-                    if (cells[i - 2, j].enabled) return false;
-                    if (j - 2 >= 0) if (cells[i - 2, j - 2].enabled) return false;
+                    if (cells[i - 2, j].Enabled) return false;
+                    if (j - 2 >= 0) if (cells[i - 2, j - 2].Enabled) return false;
                 }
                 if (i + 1 < cells.Count)
                 {
-                    if (cells[i + 1, j].enabled) return false;
-                    if (j + 1 < cells[i + 1].Count) if (cells[i + 1, j + 1].enabled) return false;
+                    if (cells[i + 1, j].Enabled) return false;
+                    if (j + 1 < cells[i + 1].Count) if (cells[i + 1, j + 1].Enabled) return false;
                 }
                 if (i + 2 < cells.Count)
                 {
-                    if (cells[i + 2, j].enabled) return false;
-                    if (j + 2 < cells[i + 2].Count) if (cells[i + 2, j + 2].enabled) return false;
+                    if (cells[i + 2, j].Enabled) return false;
+                    if (j + 2 < cells[i + 2].Count) if (cells[i + 2, j + 2].Enabled) return false;
                 }
-                if (j + 1 < cells[i].Count) if (cells[i, j + 1].enabled) return false;
-                if (j + 2 < cells[i].Count) if (cells[i, j + 2].enabled) return false;
-                if (j - 1 >= 0) if (cells[i, j - 1].enabled) return false;
-                if (j - 2 >= 0) if (cells[i, j - 2].enabled) return false;
+                if (j + 1 < cells[i].Count) if (cells[i, j + 1].Enabled) return false;
+                if (j + 2 < cells[i].Count) if (cells[i, j + 2].Enabled) return false;
+                if (j - 1 >= 0) if (cells[i, j - 1].Enabled) return false;
+                if (j - 2 >= 0) if (cells[i, j - 2].Enabled) return false;
             }
             return true;
         }
@@ -136,11 +136,11 @@ namespace Bacterium
             int max = 0;
             for (i = 5; i < 9; i++, max++)
                 for (j = 0; j <= max; j++)
-                    cells[i, j].enabled = false;
+                    cells[i, j].Enabled = false;
             max = 5;
             for (i = 0; i < 4; i++, max++)
                 for (j = max; j < 9; j++)
-                    cells[i, j].enabled = false;
+                    cells[i, j].Enabled = false;
         }
 
         public void Start()
@@ -204,9 +204,9 @@ namespace Bacterium
         }
         public void jump(Point p, Cell c, int i, int j)
         {
-	        p.NewLocation(c.x, c.y);
+	        p.NewLocation(c.X, c.Y);
 	        p.i=i; p.j=j;
-	        c.enabled=false;
+	        c.Enabled=false;
 	        p.C.enabled=true;
 	        p.C=c; turnl=!turnl;
 	        if (expansion(p)<0)
@@ -260,10 +260,10 @@ namespace Bacterium
             {
                 for (int j = 0; j < cells[i].Count; j++)
                 {
-                    if (x - cells[i,j].x >= 0 && x - cells[i,j].x <= width &&
-                        y - cells[i,j].y >= 0 && y - cells[i,j].y <= height)
+                    if (x - cells[i,j].X >= 0 && x - cells[i,j].X <= width &&
+                        y - cells[i,j].Y >= 0 && y - cells[i,j].Y <= height)
                     {
-                        if (!cells[i,j]->enabled || (i == p.i && j == p.j)) return false;
+                        if (!cells[i,j]->Enabled || (i == p.i && j == p.j)) return false;
                         if ((i == p.i - 2 && (j == p.j || j == p.j - 2)) ||
                             (i == p.i && (j == p.j - 2 || j == p.j + 2)) ||
                             (i == p.i + 2 && (j == p.j || j == p.j + 2)))
