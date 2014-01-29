@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace Bacterium
 {
@@ -36,10 +37,11 @@ namespace Bacterium
             {
                 _side = value;
                 BitmapImage tmp;
+                String path = Directory.GetCurrentDirectory() + @"\..\..\";
                 if (_side == LIGHT)
-                    tmp = new BitmapImage(new Uri(""));
+                    tmp = new BitmapImage(new Uri(path + @"Images\Bacterium1.png"));
                 else
-                    tmp = new BitmapImage(new Uri(""));
+                    tmp = new BitmapImage(new Uri(path + @"Images\Bacterium2.png"));
                 _image.Source = tmp;
             }
         }

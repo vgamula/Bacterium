@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,10 @@ namespace Bacterium
         public MainWindow()
         {
             InitializeComponent();
+            
+            Cell c = new Cell(0, 0, true);
+            Point p = new Point(c, Point.DARK, 0, 0);
+            RootGrid.Children.Add(p.CurrentImage);
         }
     }
 }

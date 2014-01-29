@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Bacterium
 {
@@ -13,12 +15,14 @@ namespace Bacterium
         private List<Point> _darkList;
         private List<List<Cell>> _cells;
         public bool IsLightTurn { get; set; }
+        private Grid _grid;
 
-        public Game()
+        public Game(Grid grid)
         {
             _lightList = new List<Point>();
             _darkList = new List<Point>();
             _cells = new List<List<Cell>>();
+            this._grid = grid;
             InitializeCells();
         }
 
@@ -77,12 +81,14 @@ namespace Bacterium
             MessageBox.Show("Збережено! :)", "Повідомлення");
         }
 
+        /*
         public void Load()
         {
             try
             {
-                Controls.Clear();
-                InitializeComponent();
+                this._grid.Children.Clear();
+
+                //InitializeComponent();
                 _lightList.Clear();
                 _darkList.Clear();
                 _cells.Clear();
@@ -98,14 +104,14 @@ namespace Bacterium
                 {
                     i = r.ReadInt32(); j = r.ReadInt32();
                     t = new Point(_cells[i][j], Point.LIGHT, i, j);
-                    Controls.Add(t.CurrentImage);
+                    this._grid.Children.Add(t.CurrentImage);
                     _lightList.Add(t);
                 }
                 while (r.BaseStream.Position < r.BaseStream.Length)
                 {
                     i = r.ReadInt32(); j = r.ReadInt32();
                     t = new Point(_cells[i][j], Point.DARK, i, j);
-                    Controls.Add(t.CurrentImage);
+                    this._grid.Children.Add(t.CurrentImage);
                     _darkList.Add(t);
                 }
                 fs.Close();
@@ -129,6 +135,7 @@ namespace Bacterium
                 Start();
             }
         }
+        */
 
         public void InitializeCells()
         {
@@ -157,22 +164,22 @@ namespace Bacterium
         {
             Point t;
             t = new Point(_cells[0][0], Point.LIGHT, 0, 0);
-            Controls.Add(t.CurrentImage);
+            this._grid.Children.Add(t.CurrentImage);
             _lightList.Add(t);
             t = new Point(_cells[4][8], Point.LIGHT, 4, 8);
-            Controls.Add(t.CurrentImage);
+            this._grid.Children.Add(t.CurrentImage);
             _lightList.Add(t);
             t = new Point(_cells[8][4], Point.LIGHT, 8, 4);
-            Controls.Add(t.CurrentImage);
+            this._grid.Children.Add(t.CurrentImage);
             _lightList.Add(t);
             t = new Point(_cells[0][4], Point.DARK, 0, 4);
-            Controls.Add(t.CurrentImage);
+            this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
             t = new Point(_cells[4][0], Point.DARK, 4, 0);
-            Controls.Add(t.CurrentImage);
+            this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
             t = new Point(_cells[8][8], Point.DARK, 8, 8);
-            Controls.Add(t.CurrentImage);
+            this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
         }
 
@@ -199,7 +206,7 @@ namespace Bacterium
         public void Clone(Cell c, int side, int i, int j)
         {
             Point t = new Point(c, side, i, j);
-            Controls.Add(t.CurrentImage);
+            this._grid.Children.Add(t.CurrentImage);
             if (t.Side == Point.LIGHT) _lightList.Add(t);
             else _darkList.Add(t);
             IsLightTurn = !IsLightTurn;
@@ -287,3 +294,5 @@ namespace Bacterium
         }
     }
 }
+
+
