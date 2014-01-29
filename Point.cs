@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Bacterium
 {
-    class Point
+    public class Point
     {
         public static readonly int LIGHT = 1;
         public static readonly int DARK = 2;
@@ -52,7 +52,8 @@ namespace Bacterium
             set 
             {
                 _x = value;
-                Canvas.SetLeft(_image, _x);
+                _image.Margin = new System.Windows.Thickness(_x, _y, 0, 0);
+                //Canvas.SetLeft(_image, _x);
             }
         }
 
@@ -62,12 +63,14 @@ namespace Bacterium
             set
             {
                 _y = value;
-                Canvas.SetTop(_image, _y);
+                _image.Margin = new System.Windows.Thickness(_x, _y, 0, 0);
+                //Canvas.SetTop(_image, _y);
             }
         }
 
         public Point(Cell cell, int side, int i, int j)
         {
+            _image = null;
             if (!cell.Enabled) return;
             CurrentCell = cell;
             cell.Enabled = false;

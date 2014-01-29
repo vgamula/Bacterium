@@ -19,15 +19,25 @@ namespace Bacterium
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
+
     public partial class MainWindow : Window
     {
+        private Game _game;
+
         public MainWindow()
         {
             InitializeComponent();
-            
-            Cell c = new Cell(0, 0, true);
-            Point p = new Point(c, Point.DARK, 0, 0);
-            RootGrid.Children.Add(p.CurrentImage);
+            String path = Directory.GetCurrentDirectory() + @"\..\..\";
+            BitmapImage tmp = new BitmapImage(new Uri(path + @"Images\Cells.png"));
+            ImageBrush brush = new ImageBrush(tmp);
+            RootGrid.Background = brush;
+            _game = new Game(RootGrid);
+            _game.Start();
+        }
+
+        private void RootGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

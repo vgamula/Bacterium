@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bacterium
 {
-    class Cell
+    public class Cell
     {
         public int X { get; set; }
         public int Y { get; set; }

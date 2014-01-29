@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace Bacterium
 {
-    class Game
+    public class Game
     {
         private List<Point> _lightList;
         private List<Point> _darkList;
@@ -139,16 +139,17 @@ namespace Bacterium
 
         public void InitializeCells()
         {
-            List<Cell> clst;
-            const int startx = 23, starty = 114, prx = 43, pry = 24, py = 48;
-            int strty, i, j;
+            //List<Cell> CellList;
+            //const int StartX = 23, StartY = 114, ColumnStepX = 43, ColumnStepY = 24, RowStepY = 48;
+            const int StartX = -300, StartY = -200, ColumnStepX = 43, ColumnStepY = 24, RowStepY = 48;
+            int RowStartY, i, j;
             for (i = 0; i < 9; i++)
             {
-                strty = starty + py * i;
-                clst = new List<Cell>();
+                RowStartY = StartY + RowStepY * i;
+                List<Cell> CellList = new List<Cell>();
                 for (j = 0; j < 9; j++)
-                    clst.Add(new Cell(startx + prx * j, starty + pry * j, true));
-                _cells.Add(clst);
+                    CellList.Add(new Cell(StartX + ColumnStepX * j, RowStartY - ColumnStepY * j, true));
+                _cells.Add(CellList);
             }
             int max = 0;
             for (i = 5; i < 9; i++, max++)
@@ -181,6 +182,16 @@ namespace Bacterium
             t = new Point(_cells[8][8], Point.DARK, 8, 8);
             this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
+            /*for (int i = 0; i < 9; i++)
+                for (int j = 0; j < 9; j++)
+                {
+                    t = new Point(_cells[i][j], Point.LIGHT, i, j);
+                    if (t.CurrentImage != null)
+                    {
+                        this._grid.Children.Add(t.CurrentImage);
+                        _lightList.Add(t);
+                    }
+                }*/
         }
 
         public int Find(int side, int x, int y)
