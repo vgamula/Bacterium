@@ -39,9 +39,9 @@ namespace Bacterium
                 BitmapImage tmp;
                 String path = Directory.GetCurrentDirectory() + @"\..\..\";
                 if (_side == LIGHT)
-                    tmp = new BitmapImage(new Uri(path + @"Images\Bacterium1.png"));
+                    tmp = new BitmapImage(new Uri(path + @"Images\Bacteriums\Bacterium1.png"));
                 else
-                    tmp = new BitmapImage(new Uri(path + @"Images\Bacterium2.png"));
+                    tmp = new BitmapImage(new Uri(path + @"Images\Bacteriums\Bacterium2.png"));
                 _image.Source = tmp;
             }
         }
