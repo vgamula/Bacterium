@@ -9,8 +9,41 @@ using System.Windows.Controls;
 
 namespace Bacterium
 {
+    
     public class Game
     {
+        public int LightCount 
+        { 
+            get 
+            {
+                return _lightList.Count;
+            }
+        }
+
+        public int DarkCount 
+        { 
+            get 
+            {
+                return _darkList.Count;
+            }
+        }
+
+        public Point ToFront(int side, int index)
+        {
+            if (side == Point.LIGHT)
+            {
+                this._lightList[index].BringToFront(); 
+                return this._lightList[index];
+            }
+            else
+            {
+                this._darkList[index].BringToFront();
+                return this._darkList[index];
+            }
+            
+        }
+
+
         private List<Point> _lightList;
         private List<Point> _darkList;
         private List<List<Cell>> _cells;
@@ -41,7 +74,7 @@ namespace Bacterium
                 if (i - 2 >= 0)
                 {
                     if (_cells[i - 2][j].Enabled) return false;
-                    if (j - 2 >= 0) if (_cells[i - 2][ j - 2].Enabled) return false;
+                    if (j - 2 >= 0) if (_cells[i - 2][j - 2].Enabled) return false;
                 }
                 if (i + 1 < _cells.Count)
                 {
@@ -82,17 +115,17 @@ namespace Bacterium
         }
 
         
-        /*public void Load()
+
+
+        public void Load()
         {
             try
             {
                 this._grid.Children.Clear();
-
-                //InitializeComponent();
+                
                 _lightList.Clear();
                 _darkList.Clear();
                 _cells.Clear();
-                //new method here
                 InitializeCells();
                 FileStream fs = new FileStream("save.bin", FileMode.Open);
                 BinaryReader r = new BinaryReader(fs);
@@ -115,31 +148,18 @@ namespace Bacterium
                     _darkList.Add(t);
                 }
                 fs.Close();
-                label1.Text = Convert.ToString(_lightList.Count);
-                label2.Text = Convert.ToString(_darkList.Count);
-                if (IsLightTurn)
-                {
-                    pictureBox3.Visible = true;
-                    pictureBox4.Visible = false;
-                }
-                else
-                {
-                    pictureBox4.Visible = true;
-                    pictureBox3.Visible = false;
-                }
-                MessageBox.Show("Завантажено! :)", "Повідомлення");
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Немає збережених даних.", "Повідомлення");
-                Start();
+                throw;
             }
-        }*/
-        
+        }
+
+
 
         public void InitializeCells()
         {
-            const int StartX = -300, StartY = -200, ColumnStepX = 43, ColumnStepY = 24, RowStepY = 48;
+            const int StartX = -370, StartY = -220, ColumnStepX = 92, ColumnStepY = 53, RowStepY = 108;
             int RowStartY, i, j;
             for (i = 0; i < 9; i++)
             {
@@ -180,7 +200,14 @@ namespace Bacterium
             t = new Point(_cells[8][8], Point.DARK, 8, 8);
             this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
-             
+            /*for (int i = 0; i < 9; i++)
+                for (int j = 0; j < 9; j++)
+                {
+                    t = new Point(_cells[i][j], Point.LIGHT, i, j);
+                    if (t.CurrentImage != null)
+                        this._grid.Children.Add(t.CurrentImage);
+                }*/
+
         }
 
         public int Find(int side, int x, int y)
@@ -216,33 +243,34 @@ namespace Bacterium
         }
         public void Jump(Point p, Cell c, int i, int j)
         {
-	        p.SetNewLocation(c.X, c.Y);
-	        p.I = i;
+            p.SetNewLocation(c.X, c.Y);
+            p.I = i;
             p.J = j;
-	        c.Enabled=false;
-	        p.CurrentCell.Enabled=true;
-	        p.CurrentCell = c;
+            c.Enabled = false;
+            p.CurrentCell.Enabled = true;
+            p.CurrentCell = c;
             IsLightTurn = !IsLightTurn;
-	        if (Expansion(p) < 0)
-		        MessageBox.Show("Кінець, "+(_darkList.Count==0?"сині":"жовті")+" перемогли!");
+            if (Expansion(p) < 0)
+                MessageBox.Show("Кінець, " + (_darkList.Count == 0 ? "сині" : "жовті") + " перемогли!");
         }
 
         public int ChangeList(Point p, int i)
         {
             if (p.Side == Point.DARK)
-	        {
-		        p.Side = Point.LIGHT;
-		        _lightList.Add(_darkList[i]);
-		        _darkList.RemoveAt(i);
-	        } else
-	        {
-		        p.Side = Point.DARK;
-		        _darkList.Add(_lightList[i]);
-		        _lightList.RemoveAt(i);
-	        }
-	        i = i == 0 ? 0 : (i - 1);
-	        if ( _lightList.Count == 0 || _darkList.Count == 0 ) return -1;
-	        return 0;
+            {
+                p.Side = Point.LIGHT;
+                _lightList.Add(_darkList[i]);
+                _darkList.RemoveAt(i);
+            }
+            else
+            {
+                p.Side = Point.DARK;
+                _darkList.Add(_lightList[i]);
+                _lightList.RemoveAt(i);
+            }
+            i = i == 0 ? 0 : (i - 1);
+            if (_lightList.Count == 0 || _darkList.Count == 0) return -1;
+            return 0;
         }
 
         public int Expansion(Point p)

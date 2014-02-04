@@ -9,6 +9,7 @@ using System.IO;
 
 namespace Bacterium
 {
+   
     public class Point
     {
         public static readonly int LIGHT = 1;
