@@ -12,6 +12,21 @@ namespace Bacterium
     
     public class Game
     {
+        public int FreeCellsAmount
+        {
+            get
+            {
+                int am = 0;
+                foreach (var cl in _cells)
+                    foreach (Cell c in cl)
+                    {
+                        if (!c.Enabled)
+                            am++;
+                    }
+                return am;
+            }
+        }
+
         public int LightCount 
         { 
             get 
@@ -149,7 +164,7 @@ namespace Bacterium
                 }
                 fs.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -200,6 +215,8 @@ namespace Bacterium
             t = new Point(_cells[8][8], Point.DARK, 8, 8);
             this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
+            this.IsLightTurn = true;
+
             /*for (int i = 0; i < 9; i++)
                 for (int j = 0; j < 9; j++)
                 {
@@ -241,7 +258,7 @@ namespace Bacterium
                 MessageBox.Show("Кінець, " + (_darkList.Count == 0 ? "сині" : "жовті") + " перемогли!");
 
         }
-        public void Jump(Point p, Cell c, int i, int j)
+        private void Jump(Point p, Cell c, int i, int j)
         {
             p.SetNewLocation(c.X, c.Y);
             p.I = i;

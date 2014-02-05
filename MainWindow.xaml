@@ -12,8 +12,8 @@
         <Image x:Name="saveButton" HorizontalAlignment="Left" Height="34" Margin="483,461,0,0" VerticalAlignment="Top" Width="34"/>
         <Image x:Name="resetButton" HorizontalAlignment="Left" Height="34" Margin="529,461,0,0" VerticalAlignment="Top" Width="34"/>
 
-        <Grid x:Name="PointGrid" MouseLeftButtonDown="PointGrid_MouseLeftButtonDown">
-
+        <Grid x:Name="PointGrid" MouseLeftButtonDown="PointGrid_MouseLeftButtonDown" MouseMove="PointGrid_MouseMove" MouseLeftButtonUp="PointGrid_MouseLeftButtonUp">
+      
         </Grid>
     </Grid>
 </Window>

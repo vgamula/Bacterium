@@ -65,7 +65,7 @@ namespace Bacterium
             {
                 _y = value;
                 _image.Margin = new System.Windows.Thickness(_x, _y, 0, 0);
-                //Canvas.SetTop(_image, _y);
+                //Canvas.SetTop(_image, _y);   
             }
         }
 
