@@ -117,6 +117,16 @@ namespace Bacterium
             MessageBox.Show("Збережено! :)", "Повідомлення");
         }
 
+        public void Restart()
+        {
+            this._lightList.Clear();
+            this._darkList.Clear();
+            this._grid.Children.Clear();
+            this._cells.Clear();
+            this.InitializeCells();
+            this.Start();
+        }
+
         public void Load()
         {
             try

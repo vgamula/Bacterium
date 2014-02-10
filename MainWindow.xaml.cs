@@ -131,5 +131,16 @@ namespace Bacterium
             _currentPoint = null;
             ShowState();
         }
+
+        private void saveButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _game.Save();
+        }
+
+        private void resetButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _game.Restart();
+            ShowState();
+        }
     }
 }
