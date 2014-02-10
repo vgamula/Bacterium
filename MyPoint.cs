@@ -10,12 +10,12 @@ using System.IO;
 namespace Bacterium
 {
    
-    public class Point
+    public class MyPoint
     {
         public static readonly int LIGHT = 1;
         public static readonly int DARK = 2;
-        public static readonly int WIDTH = 38;
-        public static readonly int HEIGHT = 36;
+        public static readonly int WIDTH = 40;
+        public static readonly int HEIGHT = 40;
 
         private Image _image;
         private int _side;
@@ -53,8 +53,8 @@ namespace Bacterium
             set 
             {
                 _x = value;
-                _image.Margin = new System.Windows.Thickness(_x, _y, 0, 0);
-                //Canvas.SetLeft(_image, _x);
+                //_image.Margin = new System.Windows.Thickness(_x, _y, 0, 0);
+                Canvas.SetLeft(_image, _x);
             }
         }
 
@@ -64,12 +64,12 @@ namespace Bacterium
             set
             {
                 _y = value;
-                _image.Margin = new System.Windows.Thickness(_x, _y, 0, 0);
-                //Canvas.SetTop(_image, _y);   
+                //_image.Margin = new System.Windows.Thickness(_x, _y, 0, 0);
+                Canvas.SetTop(_image, _y);   
             }
         }
 
-        public Point(Cell cell, int side, int i, int j)
+        public MyPoint(Cell cell, int side, int i, int j)
         {
             _image = null;
             if (!cell.Enabled) return;

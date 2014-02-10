@@ -23,12 +23,9 @@ namespace Bacterium
     public partial class MainWindow : Window
     {
         private Game _game;
-        //private int _currentPointNumber;
         private int _lastX;
         private int _lastY;
-        private Point _currentPoint;
-        private int dx = -465;
-        public int dy = -355;
+        private MyPoint _currentPoint;
         public MainWindow()
         {
             InitializeComponent();
@@ -41,7 +38,6 @@ namespace Bacterium
             loadButton.Source = new BitmapImage(new Uri(path + @"Images\SaveAndLoad\Load1.png"));
             saveButton.Source = new BitmapImage(new Uri(path + @"Images\SaveAndLoad\Save1.png"));
             resetButton.Source = new BitmapImage(new Uri(path + @"Images\RestartArrows\RestartArrow1.png"));
-
             imageFlag1.Source = new BitmapImage(new Uri(path + @"Images\Flags\RedFlag.png"));
             imageFlag2.Source = new BitmapImage(new Uri(path + @"Images\Flags\GreenFlag.png"));
             BitmapImage tmp = new BitmapImage(new Uri(path + @"Images\Cells.png"));
@@ -49,12 +45,7 @@ namespace Bacterium
             RootGrid.Background = brush;
             _game = new Game(PointGrid);
             _game.Start();
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            MessageBox.Show(this.Width.ToString());
-            MessageBox.Show(this.Height.ToString());
+            ShowState();
         }
 
         private void loadButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -91,19 +82,18 @@ namespace Bacterium
 
         private void PointGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
-            int side, _currentPointNumber;
+            int side;
             if (_game.IsLightTurn)
-                side = Point.LIGHT;
+                side = MyPoint.LIGHT;
             else
-                side = Point.DARK;
-            int x = (int)e.GetPosition(PointGrid).X + dx;
-            int y = (int)e.GetPosition(PointGrid).Y + dy;
-            _currentPointNumber = _game.Find(side, x, y);
+                side = MyPoint.DARK;
+            int x = (int)e.GetPosition(PointGrid).X;
+            int y = (int)e.GetPosition(PointGrid).Y;
+            _currentPoint = _game.Find(side, x, y);
 
-            if (_currentPointNumber >= 0)
+            if (_currentPoint != null)
             {
-                _currentPoint = _game.ToFront(side, _currentPointNumber);
+                _currentPoint.BringToFront();
                 _lastX = _currentPoint.X;
                 _lastY = _currentPoint.Y;
             }
@@ -116,8 +106,8 @@ namespace Bacterium
                 return;
             if (_currentPoint == null)
                 return;
-            int x = (int)e.GetPosition(RootGrid).X + dx;
-            int y = (int)e.GetPosition(RootGrid).Y +dy;
+            int x = (int)e.GetPosition(RootGrid).X - MyPoint.WIDTH / 2;
+            int y = (int)e.GetPosition(RootGrid).Y - MyPoint.HEIGHT / 2;
             _currentPoint.SetNewLocation(x, y);
         }
 
@@ -125,32 +115,21 @@ namespace Bacterium
         {
             if (_currentPoint == null)
                 return;
-            int x = (int)e.GetPosition(RootGrid).X +dx;
-            int y = (int)e.GetPosition(RootGrid).Y +dy;
-
+            int x = (int)e.GetPosition(RootGrid).X;
+            int y = (int)e.GetPosition(RootGrid).Y;
             if (!_game.JumpToCell(x, y, _currentPoint))
-            {
                 _currentPoint.SetNewLocation(_lastX, _lastY);
-            };
-            ShowState();
             if (!Convert.ToBoolean(_game.FreeCellsAmount))
-                MessageBox.Show(String.Format("Game over! The winner is: {0}", _game.DarkCount > _game.LightCount ? "Green team" : "Red team"));
+                MessageBox.Show(String.Format("Game over! The winner is {0}", _game.DarkCount < _game.LightCount ? "Green team" : "Red team"));
             else
-                if (_game.IsLocked())
+                if (_game.IsLocked)
                 {
                     int tmp = ((!_game.IsLightTurn) ? _game.DarkCount : _game.LightCount) + _game.FreeCellsAmount;
                     MessageBox.Show(String.Format("Game over! The winner is: {0}", ((!_game.IsLightTurn) ? (tmp > _game.DarkCount) : (tmp > _game.LightCount)) ? "Green team" : "Red team"));
                 }
-            _game.IsLightTurn = !_game.IsLightTurn;
+            //_game.IsLightTurn = !_game.IsLightTurn;
             _currentPoint = null;
-            /*
-             
-					 if (lstl.Count + lstd.Count == 61)
-					 MessageBox::Show("Ê³íåöü, "+(lstl.Count>lstd.Count?"ñèí³":"æîâò³")+" ïåðåìîãëè!");
-					 else if (locked())
-					 MessageBox::Show("Ê³íåöü, "+(turnl?"æîâò³":"ñèí³")+" ïåðåìîãëè!");
-             
-             */
+            ShowState();
         }
     }
 }

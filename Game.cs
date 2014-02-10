@@ -43,70 +43,58 @@ namespace Bacterium
             }
         }
 
-        public Point ToFront(int side, int index)
-        {
-            if (side == Point.LIGHT)
-            {
-                this._lightList[index].BringToFront(); 
-                return this._lightList[index];
-            }
-            else
-            {
-                this._darkList[index].BringToFront();
-                return this._darkList[index];
-            }
-            
-        }
-
-
-        private List<Point> _lightList;
-        private List<Point> _darkList;
+        private List<MyPoint> _lightList;
+        private List<MyPoint> _darkList;
         private List<List<Cell>> _cells;
-        public bool IsLightTurn { get; set; }
-        private Grid _grid;
+        private Canvas _grid;
 
-        public Game(Grid grid)
+        public bool IsLightTurn { get; set; }
+
+        public Game(Canvas grid)
         {
-            _lightList = new List<Point>();
-            _darkList = new List<Point>();
+            _lightList = new List<MyPoint>();
+            _darkList = new List<MyPoint>();
             _cells = new List<List<Cell>>();
             this._grid = grid;
             InitializeCells();
         }
 
-        public bool IsLocked()
+        public bool IsLocked
         {
-            int i, j;
-            for (int ii = 0; ii < (IsLightTurn ? _lightList.Count : _darkList.Count); ii++)
+            get
             {
-                i = IsLightTurn ? _lightList[ii].I : _darkList[ii].I;
-                j = IsLightTurn ? _lightList[ii].J : _darkList[ii].J;
-                if (i - 1 >= 0)
+                int i, j;
+                for (int ii = 0; ii < (IsLightTurn ? _lightList.Count : _darkList.Count); ii++)
                 {
-                    if (_cells[i - 1][j].Enabled) return false;
-                    if (j - 1 >= 0) if (_cells[i - 1][j - 1].Enabled) return false;
+                    i = IsLightTurn ? _lightList[ii].I : _darkList[ii].I;
+                    j = IsLightTurn ? _lightList[ii].J : _darkList[ii].J;
+                    if (i - 1 >= 0)
+                    {
+                        if (_cells[i - 1][j].Enabled) return false;
+                        if (j - 1 >= 0) if (_cells[i - 1][j - 1].Enabled) return false;
+                    }
+                    if (i - 2 >= 0)
+                    {
+                        if (_cells[i - 2][j].Enabled) return false;
+                        if (j - 2 >= 0) if (_cells[i - 2][j - 2].Enabled) return false;
+                    }
+                    if (i + 1 < _cells.Count)
+                    {
+                        if (_cells[i + 1][j].Enabled) return false;
+                        if (j + 1 < _cells[i + 1].Count) if (_cells[i + 1][j + 1].Enabled) return false;
+                    }
+                    if (i + 2 < _cells.Count)
+                    {
+                        if (_cells[i + 2][j].Enabled) return false;
+                        if (j + 2 < _cells[i + 2].Count) if (_cells[i + 2][j + 2].Enabled) return false;
+                    }
+                    if (j + 1 < _cells[i].Count) if (_cells[i][j + 1].Enabled) return false;
+                    if (j + 2 < _cells[i].Count) if (_cells[i][j + 2].Enabled) return false;
+                    if (j - 1 >= 0) if (_cells[i][j - 1].Enabled) return false;
+                    if (j - 2 >= 0) if (_cells[i][j - 2].Enabled) return false;
                 }
-                if (i - 2 >= 0)
-                {
-                    if (_cells[i - 2][j].Enabled) return false;
-                    if (j - 2 >= 0) if (_cells[i - 2][j - 2].Enabled) return false;
-                }
-                if (i + 1 < _cells.Count)
-                {
-                    if (_cells[i + 1][j].Enabled) return false;
-                    if (j + 1 < _cells[i + 1].Count) if (_cells[i + 1][j + 1].Enabled) return false;
-                }
-                if (i + 2 < _cells.Count)
-                {
-                    if (_cells[i + 2][j].Enabled) return false;
-                    if (j + 2 < _cells[i + 2].Count) if (_cells[i + 2][j + 2].Enabled) return false;
-                }
-                if (j + 1 < _cells[i].Count) if (_cells[i][j + 1].Enabled) return false;
-                if (j + 2 < _cells[i].Count) if (_cells[i][j + 2].Enabled) return false;
-                if (j - 1 >= 0) if (_cells[i][j - 1].Enabled) return false;
-                if (j - 2 >= 0) if (_cells[i][j - 2].Enabled) return false;
+                return true;
             }
-            return true;
         }
 
         public void Save()
@@ -129,9 +117,6 @@ namespace Bacterium
             MessageBox.Show("Збережено! :)", "Повідомлення");
         }
 
-        
-
-
         public void Load()
         {
             try
@@ -145,20 +130,20 @@ namespace Bacterium
                 FileStream fs = new FileStream("save.bin", FileMode.Open);
                 BinaryReader r = new BinaryReader(fs);
                 int i, j, lcount;
-                Point t;
+                MyPoint t;
                 IsLightTurn = r.ReadBoolean();
                 lcount = r.ReadInt32();
                 for (int ii = 0; ii < lcount; ii++)
                 {
                     i = r.ReadInt32(); j = r.ReadInt32();
-                    t = new Point(_cells[i][j], Point.LIGHT, i, j);
+                    t = new MyPoint(_cells[i][j], MyPoint.LIGHT, i, j);
                     this._grid.Children.Add(t.CurrentImage);
                     _lightList.Add(t);
                 }
                 while (r.BaseStream.Position < r.BaseStream.Length)
                 {
                     i = r.ReadInt32(); j = r.ReadInt32();
-                    t = new Point(_cells[i][j], Point.DARK, i, j);
+                    t = new MyPoint(_cells[i][j], MyPoint.DARK, i, j);
                     this._grid.Children.Add(t.CurrentImage);
                     _darkList.Add(t);
                 }
@@ -170,11 +155,10 @@ namespace Bacterium
             }
         }
 
-
-
         public void InitializeCells()
         {
-            const int StartX = -370, StartY = -220, ColumnStepX = 92, ColumnStepY = 53, RowStepY = 108;
+            //const int StartX = -370, StartY = -220, ColumnStepX = 92, ColumnStepY = 53, RowStepY = 108;
+            const int StartX = 79, StartY = 119, ColumnStepX = 46, ColumnStepY = 27, RowStepY = 54;
             int RowStartY, i, j;
             for (i = 0; i < 9; i++)
             {
@@ -196,23 +180,23 @@ namespace Bacterium
 
         public void Start()
         {
-            Point t;
-            t = new Point(_cells[0][0], Point.LIGHT, 0, 0);
+            MyPoint t;
+            t = new MyPoint(_cells[0][0], MyPoint.LIGHT, 0, 0);
             this._grid.Children.Add(t.CurrentImage);
             _lightList.Add(t);
-            t = new Point(_cells[4][8], Point.LIGHT, 4, 8);
+            t = new MyPoint(_cells[4][8], MyPoint.LIGHT, 4, 8);
             this._grid.Children.Add(t.CurrentImage);
             _lightList.Add(t);
-            t = new Point(_cells[8][4], Point.LIGHT, 8, 4);
+            t = new MyPoint(_cells[8][4], MyPoint.LIGHT, 8, 4);
             this._grid.Children.Add(t.CurrentImage);
             _lightList.Add(t);
-            t = new Point(_cells[0][4], Point.DARK, 0, 4);
+            t = new MyPoint(_cells[0][4], MyPoint.DARK, 0, 4);
             this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
-            t = new Point(_cells[4][0], Point.DARK, 4, 0);
+            t = new MyPoint(_cells[4][0], MyPoint.DARK, 4, 0);
             this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
-            t = new Point(_cells[8][8], Point.DARK, 8, 8);
+            t = new MyPoint(_cells[8][8], MyPoint.DARK, 8, 8);
             this._grid.Children.Add(t.CurrentImage);
             _darkList.Add(t);
             this.IsLightTurn = true;
@@ -220,45 +204,45 @@ namespace Bacterium
             /*for (int i = 0; i < 9; i++)
                 for (int j = 0; j < 9; j++)
                 {
-                    t = new Point(_cells[i][j], Point.LIGHT, i, j);
+                    t = new MyPoint(_cells[i][j], MyPoint.LIGHT, i, j);
                     if (t.CurrentImage != null)
                         this._grid.Children.Add(t.CurrentImage);
                 }*/
 
         }
 
-        public int Find(int side, int x, int y)
+        public MyPoint Find(int side, int x, int y)
         {
-            int closest = -1;
-            if (side == Point.LIGHT)
+            MyPoint closest = null;
+            if (side == MyPoint.LIGHT)
                 for (int i = 0; i < _lightList.Count; i++)
                 {
-                    if (x - _lightList[i].X >= 0 && x - _lightList[i].X <= Point.WIDTH &&
-                        y - _lightList[i].Y >= 0 && y - _lightList[i].Y <= Point.HEIGHT)
-                    { closest = i; break; }
+                    if (x - _lightList[i].X >= 0 && x - _lightList[i].X <= MyPoint.WIDTH &&
+                        y - _lightList[i].Y >= 0 && y - _lightList[i].Y <= MyPoint.HEIGHT)
+                    { closest = _lightList[i]; break; }
                 }
-            else if (side == Point.DARK)
+            else if (side == MyPoint.DARK)
                 for (int i = 0; i < _darkList.Count; i++)
                 {
-                    if (x - _darkList[i].X >= 0 && x - _darkList[i].X <= Point.WIDTH &&
-                        y - _darkList[i].Y >= 0 && y - _darkList[i].Y <= Point.HEIGHT)
-                    { closest = i; break; }
+                    if (x - _darkList[i].X >= 0 && x - _darkList[i].X <= MyPoint.WIDTH &&
+                        y - _darkList[i].Y >= 0 && y - _darkList[i].Y <= MyPoint.HEIGHT)
+                    { closest = _darkList[i]; break; }
                 }
             return closest;
         }
 
         public void Clone(Cell c, int side, int i, int j)
         {
-            Point t = new Point(c, side, i, j);
+            MyPoint t = new MyPoint(c, side, i, j);
             this._grid.Children.Add(t.CurrentImage);
-            if (t.Side == Point.LIGHT) _lightList.Add(t);
+            if (t.Side == MyPoint.LIGHT) _lightList.Add(t);
             else _darkList.Add(t);
             IsLightTurn = !IsLightTurn;
-            if (Expansion(t) < 0)
-                MessageBox.Show("Кінець, " + (_darkList.Count == 0 ? "сині" : "жовті") + " перемогли!");
+            Expansion(t);
+              //  MessageBox.Show(String.Format("Game over! The winner is: {0}", _lightList.Count == 0 ? "Green team" : "Red team"));
 
         }
-        private void Jump(Point p, Cell c, int i, int j)
+        private void Jump(MyPoint p, Cell c, int i, int j)
         {
             p.SetNewLocation(c.X, c.Y);
             p.I = i;
@@ -267,60 +251,70 @@ namespace Bacterium
             p.CurrentCell.Enabled = true;
             p.CurrentCell = c;
             IsLightTurn = !IsLightTurn;
-            if (Expansion(p) < 0)
-                MessageBox.Show("Кінець, " + (_darkList.Count == 0 ? "сині" : "жовті") + " перемогли!");
+            Expansion(p);
+              //  MessageBox.Show(String.Format("Game over! The winner is: {0}", _lightList.Count == 0 ? "Green team" : "Red team"));
         }
 
-        public int ChangeList(Point p, int i)
+        public int ChangeList(MyPoint p, int i)
         {
-            if (p.Side == Point.DARK)
+            if (p.Side == MyPoint.DARK)
             {
-                p.Side = Point.LIGHT;
+                p.Side = MyPoint.LIGHT;
                 _lightList.Add(_darkList[i]);
                 _darkList.RemoveAt(i);
             }
             else
             {
-                p.Side = Point.DARK;
+                p.Side = MyPoint.DARK;
                 _darkList.Add(_lightList[i]);
                 _lightList.RemoveAt(i);
             }
-            i = i == 0 ? 0 : (i - 1);
+            //i = i == 0 ? 0 : (i - 1);
             if (_lightList.Count == 0 || _darkList.Count == 0) return -1;
             return 0;
         }
 
-        public int Expansion(Point p)
+        public int Expansion(MyPoint p)
         {
-            if (p.Side == Point.LIGHT)
+            if (p.Side == MyPoint.LIGHT)
             {
-                for (int ii = 0; ii < _darkList.Count; ii++)
+                for (int i = 0; i < _darkList.Count; i++)
                 {
-                    if ((_darkList[ii].I == p.I - 1 && (_darkList[ii].J == p.J || _darkList[ii].J == p.J - 1)) ||
-                        (_darkList[ii].I == p.I && (_darkList[ii].J == p.J - 1 || _darkList[ii].J == p.J + 1)) ||
-                        (_darkList[ii].I == p.I + 1 && (_darkList[ii].J == p.J || _darkList[ii].J == p.J + 1)))
-                        if (ChangeList(_darkList[ii], ii) < 0) return -1;
+                    if ((_darkList[i].I == p.I - 1 && (_darkList[i].J == p.J || _darkList[i].J == p.J - 1)) ||
+                        (_darkList[i].I == p.I && (_darkList[i].J == p.J - 1 || _darkList[i].J == p.J + 1)) ||
+                        (_darkList[i].I == p.I + 1 && (_darkList[i].J == p.J || _darkList[i].J == p.J + 1)))
+                    {
+                        if (ChangeList(_darkList[i], i) < 0)
+                            return -1;
+                        else
+                            i = i == 0 ? 0 : (i - 1);
+                    }
                 }
             }
             else
-                for (int ii = 0; ii < _lightList.Count; ii++)
+                for (int i = 0; i < _lightList.Count; i++)
                 {
-                    if ((_lightList[ii].I == p.I - 1 && (_lightList[ii].J == p.J || _lightList[ii].J == p.J - 1)) ||
-                        (_lightList[ii].I == p.I && (_lightList[ii].J == p.J - 1 || _lightList[ii].J == p.J + 1)) ||
-                        (_lightList[ii].I == p.I + 1 && (_lightList[ii].J == p.J || _lightList[ii].J == p.J + 1)))
-                        if (ChangeList(_lightList[ii], ii) < 0) return -1;
+                    if ((_lightList[i].I == p.I - 1 && (_lightList[i].J == p.J || _lightList[i].J == p.J - 1)) ||
+                        (_lightList[i].I == p.I && (_lightList[i].J == p.J - 1 || _lightList[i].J == p.J + 1)) ||
+                        (_lightList[i].I == p.I + 1 && (_lightList[i].J == p.J || _lightList[i].J == p.J + 1)))
+                    {
+                        if (ChangeList(_lightList[i], i) < 0)
+                            return -1;
+                        else
+                            i = i == 0 ? 0 : (i - 1);
+                    }
                 }
             return 0;
         }
 
-        public bool JumpToCell(int x, int y, Point p)
+        public bool JumpToCell(int x, int y, MyPoint p)
         {
             for (int i = 0; i < _cells.Count; i++)
             {
                 for (int j = 0; j < _cells[i].Count; j++)
                 {
-                    if (x - _cells[i][j].X >= 0 && x - _cells[i][j].X <= Point.WIDTH &&
-                        y - _cells[i][j].Y >= 0 && y - _cells[i][j].Y <= Point.HEIGHT)
+                    if (x - _cells[i][j].X >= 0 && x - _cells[i][j].X <= MyPoint.WIDTH &&
+                        y - _cells[i][j].Y >= 0 && y - _cells[i][j].Y <= MyPoint.HEIGHT)
                     {
                         if (!_cells[i][j].Enabled || (i == p.I && j == p.J)) return false;
                         if ((i == p.I - 2 && (j == p.J || j == p.J - 2)) ||

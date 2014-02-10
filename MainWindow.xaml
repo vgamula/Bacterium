@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Bacterium.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="534" Width="583" Background="White" ResizeMode="NoResize">
+        Title="MainWindow" Height="534" Width="583" Background="White" ResizeMode="CanMinimize" WindowStartupLocation="Manual">
     <Grid x:Name="RootGrid">
         <Image x:Name="loadButton" HorizontalAlignment="Left" Height="34" Margin="444,461,0,0" VerticalAlignment="Top" Width="34" MouseLeftButtonDown="loadButton_MouseLeftButtonDown">
         </Image>
@@ -11,9 +11,7 @@
         <Image x:Name="imageFlag2" HorizontalAlignment="Left" Height="36" Margin="529,36,0,0" VerticalAlignment="Top" Width="38"/>
         <Image x:Name="saveButton" HorizontalAlignment="Left" Height="34" Margin="483,461,0,0" VerticalAlignment="Top" Width="34"/>
         <Image x:Name="resetButton" HorizontalAlignment="Left" Height="34" Margin="529,461,0,0" VerticalAlignment="Top" Width="34"/>
-
-        <Grid x:Name="PointGrid" MouseLeftButtonDown="PointGrid_MouseLeftButtonDown" MouseMove="PointGrid_MouseMove" MouseLeftButtonUp="PointGrid_MouseLeftButtonUp">
-      
-        </Grid>
+        <Canvas x:Name="PointGrid" MouseLeftButtonDown="PointGrid_MouseLeftButtonDown" MouseLeftButtonUp="PointGrid_MouseLeftButtonUp" MouseMove="PointGrid_MouseMove">
+        </Canvas>
     </Grid>
 </Window>
