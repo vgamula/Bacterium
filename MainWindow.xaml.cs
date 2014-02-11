@@ -23,8 +23,6 @@ namespace Bacterium
     public partial class MainWindow : Window
     {
         private Game _game;
-        private int _lastX;
-        private int _lastY;
         private MyPoint _currentPoint;
         public MainWindow()
         {
@@ -54,7 +52,7 @@ namespace Bacterium
             {
                 _game.Load();
                 ShowState();
-                MessageBox.Show("Завантажено! :)", "Повідомлення");
+                MessageBox.Show("Loaded! :)", "Message");
             }
             catch (Exception ex)
             {
@@ -82,6 +80,12 @@ namespace Bacterium
 
         private void PointGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (_currentPoint != null)
+            {
+                Cell tmp = _currentPoint.CurrentCell;
+                _currentPoint.SetNewLocation(tmp.X, tmp.Y);
+                _currentPoint = null;
+            }
             int side;
             if (_game.IsLightTurn)
                 side = MyPoint.LIGHT;
@@ -94,8 +98,6 @@ namespace Bacterium
             if (_currentPoint != null)
             {
                 _currentPoint.BringToFront();
-                _lastX = _currentPoint.X;
-                _lastY = _currentPoint.Y;
             }
 
         }
@@ -108,6 +110,12 @@ namespace Bacterium
                 return;
             int x = (int)e.GetPosition(RootGrid).X - MyPoint.WIDTH / 2;
             int y = (int)e.GetPosition(RootGrid).Y - MyPoint.HEIGHT / 2;
+            if (x < _currentPoint.X || x > _currentPoint.X + MyPoint.WIDTH ||
+                y < _currentPoint.Y || y > _currentPoint.Y + MyPoint.HEIGHT)
+            {
+                Cell tmp = _currentPoint.CurrentCell;
+                _currentPoint.SetNewLocation(tmp.X, tmp.Y);
+            }
             _currentPoint.SetNewLocation(x, y);
         }
 
@@ -117,8 +125,14 @@ namespace Bacterium
                 return;
             int x = (int)e.GetPosition(RootGrid).X;
             int y = (int)e.GetPosition(RootGrid).Y;
-            if (!_game.JumpToCell(x, y, _currentPoint))
-                _currentPoint.SetNewLocation(_lastX, _lastY);
+            if (x < _currentPoint.X || x > _currentPoint.X + MyPoint.WIDTH ||
+                y < _currentPoint.Y || y > _currentPoint.Y + MyPoint.HEIGHT ||
+                !_game.JumpToCell(x, y, _currentPoint))
+            {
+                Cell tmp = _currentPoint.CurrentCell;
+                _currentPoint.SetNewLocation(tmp.X, tmp.Y);
+            }
+            ShowState();
             if (!Convert.ToBoolean(_game.FreeCellsAmount))
                 MessageBox.Show(String.Format("Game over! The winner is {0}", _game.DarkCount < _game.LightCount ? "Green team" : "Red team"));
             else
@@ -127,14 +141,14 @@ namespace Bacterium
                     int tmp = ((!_game.IsLightTurn) ? _game.DarkCount : _game.LightCount) + _game.FreeCellsAmount;
                     MessageBox.Show(String.Format("Game over! The winner is: {0}", ((!_game.IsLightTurn) ? (tmp > _game.DarkCount) : (tmp > _game.LightCount)) ? "Green team" : "Red team"));
                 }
-            //_game.IsLightTurn = !_game.IsLightTurn;
+            _currentPoint.SetToBack();
             _currentPoint = null;
-            ShowState();
         }
 
         private void saveButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _game.Save();
+            MessageBox.Show("Saved! :)", "Message");
         }
 
         private void resetButton_MouseDown(object sender, MouseButtonEventArgs e)

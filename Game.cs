@@ -114,7 +114,6 @@ namespace Bacterium
                 w.Write((Int32)_darkList[i].J);
             }
             fs.Close();
-            MessageBox.Show("Збережено! :)", "Повідомлення");
         }
 
         public void Restart()
@@ -297,7 +296,11 @@ namespace Bacterium
                         if (ChangeList(_darkList[i], i) < 0)
                             return -1;
                         else
-                            i = i == 0 ? 0 : (i - 1);
+                        {
+                            //i = i == _darkList.Count ? i - 1 : i;
+                            //i = i <= 0 ? 0 : i - 1;
+                            i--;
+                        }
                     }
                 }
             }
@@ -311,7 +314,12 @@ namespace Bacterium
                         if (ChangeList(_lightList[i], i) < 0)
                             return -1;
                         else
-                            i = i == 0 ? 0 : (i - 1);
+                        {
+                            //i = i == _lightList.Count ? i - 1 : i;
+                            //i = i <= 0 ? 0 : i - 1;
+                            i--;
+                        }
+                             
                     }
                 }
             return 0;
