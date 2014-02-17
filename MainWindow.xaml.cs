@@ -108,8 +108,8 @@ namespace Bacterium
                 return;
             if (_currentPoint == null)
                 return;
-            int x = (int)e.GetPosition(RootGrid).X - MyPoint.WIDTH / 2;
-            int y = (int)e.GetPosition(RootGrid).Y - MyPoint.HEIGHT / 2;
+            int x = (int)e.GetPosition(PointGrid).X - MyPoint.WIDTH / 2;
+            int y = (int)e.GetPosition(PointGrid).Y - MyPoint.HEIGHT / 2;
             if (x < _currentPoint.X || x > _currentPoint.X + MyPoint.WIDTH ||
                 y < _currentPoint.Y || y > _currentPoint.Y + MyPoint.HEIGHT)
             {
@@ -123,8 +123,8 @@ namespace Bacterium
         {
             if (_currentPoint == null)
                 return;
-            int x = (int)e.GetPosition(RootGrid).X;
-            int y = (int)e.GetPosition(RootGrid).Y;
+            int x = (int)e.GetPosition(PointGrid).X;
+            int y = (int)e.GetPosition(PointGrid).Y;
             if (x < _currentPoint.X || x > _currentPoint.X + MyPoint.WIDTH ||
                 y < _currentPoint.Y || y > _currentPoint.Y + MyPoint.HEIGHT ||
                 !_game.JumpToCell(x, y, _currentPoint))
@@ -133,8 +133,8 @@ namespace Bacterium
                 _currentPoint.SetNewLocation(tmp.X, tmp.Y);
             }
             ShowState();
-            if (!Convert.ToBoolean(_game.FreeCellsAmount))
-                MessageBox.Show(String.Format("Game over! The winner is {0}", _game.DarkCount < _game.LightCount ? "Green team" : "Red team"));
+            if (_game.FreeCellsAmount == 0)
+                MessageBox.Show(String.Format("Game over! The winner is {0}", _game.DarkCount < _game.LightCount ? "Red team" : "Green team"));
             else
                 if (_game.IsLocked)
                 {
@@ -155,6 +155,17 @@ namespace Bacterium
         {
             _game.Restart();
             ShowState();
+        }
+
+        private void RootGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+            if (_currentPoint == null)
+                return;
+            int x = (int)e.GetPosition(PointGrid).X - MyPoint.WIDTH / 2;
+            int y = (int)e.GetPosition(PointGrid).Y - MyPoint.HEIGHT / 2;
+            _currentPoint.SetNewLocation(x, y);
         }
     }
 }

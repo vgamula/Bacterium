@@ -20,7 +20,7 @@ namespace Bacterium
                 foreach (var cl in _cells)
                     foreach (Cell c in cl)
                     {
-                        if (!c.Enabled)
+                        if (c.Enabled)
                             am++;
                     }
                 return am;
@@ -278,7 +278,6 @@ namespace Bacterium
                 _darkList.Add(_lightList[i]);
                 _lightList.RemoveAt(i);
             }
-            //i = i == 0 ? 0 : (i - 1);
             if (_lightList.Count == 0 || _darkList.Count == 0) return -1;
             return 0;
         }
@@ -295,12 +294,7 @@ namespace Bacterium
                     {
                         if (ChangeList(_darkList[i], i) < 0)
                             return -1;
-                        else
-                        {
-                            //i = i == _darkList.Count ? i - 1 : i;
-                            //i = i <= 0 ? 0 : i - 1;
-                            i--;
-                        }
+                        else i--;
                     }
                 }
             }
@@ -313,13 +307,7 @@ namespace Bacterium
                     {
                         if (ChangeList(_lightList[i], i) < 0)
                             return -1;
-                        else
-                        {
-                            //i = i == _lightList.Count ? i - 1 : i;
-                            //i = i <= 0 ? 0 : i - 1;
-                            i--;
-                        }
-                             
+                        else i--;
                     }
                 }
             return 0;
