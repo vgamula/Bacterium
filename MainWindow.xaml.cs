@@ -32,7 +32,8 @@ namespace Bacterium
 
         private void StartGame()
         {
-            String path = Directory.GetCurrentDirectory() + @"\..\..\";
+            //String path = Directory.GetCurrentDirectory() + @"\..\..\";
+            String path = Directory.GetCurrentDirectory() + @"\";
             loadButton.Source = new BitmapImage(new Uri(path + @"Images\SaveAndLoad\Load1.png"));
             saveButton.Source = new BitmapImage(new Uri(path + @"Images\SaveAndLoad\Save1.png"));
             resetButton.Source = new BitmapImage(new Uri(path + @"Images\RestartArrows\RestartArrow1.png"));
@@ -138,8 +139,9 @@ namespace Bacterium
             else
                 if (_game.IsLocked)
                 {
-                    int tmp = ((!_game.IsLightTurn) ? _game.DarkCount : _game.LightCount) + _game.FreeCellsAmount;
-                    MessageBox.Show(String.Format("Game over! The winner is: {0}", ((!_game.IsLightTurn) ? (tmp > _game.DarkCount) : (tmp > _game.LightCount)) ? "Green team" : "Red team"));
+                    int lightCount = _game.LightCount + (_game.IsLightTurn ? 0 : _game.FreeCellsAmount);
+                    int darkCount = _game.DarkCount + (_game.IsLightTurn ? _game.FreeCellsAmount : 0);
+                    MessageBox.Show(String.Format("Game over! The winner is: {0}", (lightCount > darkCount) ? "Red team" : "Green team"));
                 }
             _currentPoint.SetToBack();
             _currentPoint = null;
