@@ -45,6 +45,7 @@ namespace Bacterium
             _game = new Game(PointGrid);
             _game.Start();
             ShowState();
+            this.Icon = new BitmapImage(new Uri(path + @"Images\icon.ico"));
         }
 
         private void loadButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
