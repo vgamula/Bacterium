@@ -337,6 +337,11 @@ namespace Bacterium
             }
             return false;
         }
+
+        public static void Message()
+        {
+            MessageBox.Show("A MOST IMPORTANT MESSAGE");
+        }
     }
 }
 

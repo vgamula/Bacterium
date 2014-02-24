@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Bacterium.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="534" Width="583" Background="White" ResizeMode="CanMinimize" WindowStartupLocation="Manual">
+        Title="Bacterium" Height="534" Width="583" Background="White" ResizeMode="CanMinimize" WindowStartupLocation="Manual">
     <Grid x:Name="RootGrid" MouseMove="RootGrid_MouseMove">
         <Image x:Name="loadButton" HorizontalAlignment="Left" Height="34" Margin="444,461,0,0" VerticalAlignment="Top" Width="34" MouseLeftButtonDown="loadButton_MouseLeftButtonDown">
         </Image>
