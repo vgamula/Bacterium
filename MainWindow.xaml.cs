@@ -46,6 +46,7 @@ namespace Bacterium
             _game.Start();
             ShowState();
             this.Icon = new BitmapImage(new Uri(path + @"Images\icon.ico"));
+            MessageBox.Show("The game is began!");
         }
 
         private void loadButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
